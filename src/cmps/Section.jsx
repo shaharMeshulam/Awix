@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { ItemTypes } from '../ItemTypes';
+import { Dustbin } from './Dustbin';
 const style = {
     border: '1px dashed gray',
     padding: '0.5rem 1rem',
@@ -67,6 +68,14 @@ export function Section({ id, text, index, moveSection }) {
     const opacity = isDragging ? 0 : 1;
     drag(drop(ref));
     return (<div ref={ref} style={{ ...style, opacity }} data-handler-id={handlerId}>
-			{text}
+			{/* <Dustbin 
+                key={dustbin.id} 
+                index={index} 
+                id={dustbin.id} 
+                text={dustbin.text} 
+                moveDustbins={moveDustbins} 
+                accept={ItemTypes.COLUMN} 
+                childrens={dustbin.childrens} 
+                onDrop={(item) => handleDrop(index, item)}/>; */}
 		</div>);
 };

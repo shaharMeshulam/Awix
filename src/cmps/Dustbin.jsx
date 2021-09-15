@@ -1,5 +1,6 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { useDrop } from 'react-dnd';
+import { Section } from './Section';
 const style = {
     height: '12rem',
     width: '12rem',
@@ -22,6 +23,23 @@ export const Dustbin = memo(function Dustbin({ accept, childrens, onDrop, }) {
         }),
     });
     const isActive = isOver && canDrop;
+    const KeysToComponentMap = {
+        section: Section
+    };
+    function renderer(config) {
+        if (typeof KeysToComponentMap[config.component] !== "undefined") {
+            return React.createElement(
+                KeysToComponentMap[config.component],
+                {
+                    src: config.src
+                },
+                config.children &&
+                (typeof config.children === "string"
+                    ? config.children
+                    : config.children.map(c => renderer(c)))
+            );
+        }
+    }
     let backgroundColor = '#222';
     if (isActive) {
         backgroundColor = 'darkgreen';
@@ -30,10 +48,10 @@ export const Dustbin = memo(function Dustbin({ accept, childrens, onDrop, }) {
         backgroundColor = 'darkkhaki';
     }
     return (<div ref={drop} role="Dustbin" style={{ ...style, backgroundColor }}>
-			{isActive
-        ? 'Release to drop'
-        : `This dustbin accepts: ${accept.join(', ')}`}
-
-			{childrens && (<p>Last dropped: {JSON.stringify(childrens)}</p>)}
-		</div>);
+        {isActive
+            ? 'Release to drop'
+            : `This dustbin accepts: ${accept.join(', ')}`}
+        {childrens.map(children => renderer(children))}
+        {childrens && (<p>Dropped: {JSON.stringify(childrens)}</p>)}
+    </div>);
 });

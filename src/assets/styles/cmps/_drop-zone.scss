@@ -1,0 +1,32 @@
+.dropZone {
+    flex: 0 0 auto;
+    height: 40px;
+    transition: 200ms all;
+
+    &:nth-of-type(2n) {
+        display: none;
+    }
+
+    &.horizontalDrag {
+        width: 40px;
+        height: auto;
+    }
+
+    &:not(.horizontalDrag) {
+        &.isLast {
+            flex: 1 1 auto;
+        }
+    }
+
+    &.active {
+        background: $dropZoneActiveColor;
+    }
+  }
+  
+  
+  
+  .dropZone.active,
+  .trashDropZone.active {
+    background: #00a2ff;
+    transition: 100ms all;
+  }

@@ -9,14 +9,15 @@ const style = {
     cursor: 'move',
     float: 'left',
 };
-export const Content = memo(function Content({ component, type, isDropped }) {
+export const Content = memo(function Content({ id, component, type, isDropped }) {
     const [{ opacity }, drag] = useDrag(() => ({
+        id,
         type,
         item: { component },
         collect: (monitor) => ({
             opacity: monitor.isDragging() ? 0.4 : 1,
         }),
-    }), [component, type]);
+    }), [id, component, type]);
     return (<div ref={drag} role="Content" style={{ ...style, opacity }}>
         {isDropped ? <s>{component}</s> : component}
     </div>);

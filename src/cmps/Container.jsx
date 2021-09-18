@@ -12,17 +12,18 @@ export function Container() {
         ]);
         const [droppedDustBinNames, setDroppedDustBinNames] = useState([]);
         const moveDustbins = useCallback((dragIndex, hoverIndex) => {
-            const dragSection = dustbins[dragIndex];
-            setDustbins(update(dustbins, {
+            const dragSection = dustbins.childrens[dragIndex];
+            setDustbins(update(dustbins.childrens, {
                 $splice: [
                     [dragIndex, 1],
                     [hoverIndex, 0, dragSection],
                 ],
             }));
-        }, [dustbins]);
+        }, [dustbins.childrens]);
         const handleDrop = useCallback((index, item) => {
-            const { name } = item;
-            setDroppedDustBinNames(update(droppedDustBinNames, name ? { $push: [name] } : { $push: [] }));
+            console.log("item", item);
+            const { component } = item;
+            setDroppedDustBinNames(update(droppedDustBinNames, component ? { $push: [component] } : { $push: [] }));
             setDustbins(update(dustbins, {
                 [index]: {
                     childrens: {

@@ -4,12 +4,12 @@ import { Content } from './Content';
 
 export function Menu() {
     const [contents] = useState([
-        { component: 'section', type: ItemTypes.SECTION },
+        { id: 1,component: 'section', type: ItemTypes.SECTION },
         { component: 'column', type: ItemTypes.COLUMN },
     ]);
     return (
         <ul>
-            {contents.map(({ component, type }, index) => (<Content component={component} type={type} key={index} />))}
+            {contents.map(({ component, type }, index) => (<Content id="1" component={component} type={type} key={index} />))}
         </ul>
     )
 }

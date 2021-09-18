@@ -1,10 +1,9 @@
-import React, { memo, useState, useCallback } from 'react';
-import update from 'immutability-helper';
+import React, { memo } from 'react';
 import { useDrop } from 'react-dnd';
-import { Section } from './Section';
+import { Section2 } from './Section2';
 const style = {
-    height: '50rem',
-    width: '50rem',
+    height: '12rem',
+    width: '12rem',
     marginRight: '1.5rem',
     marginBottom: '1.5rem',
     color: 'white',
@@ -14,17 +13,7 @@ const style = {
     lineHeight: 'normal',
     float: 'left',
 };
-export const Dustbin = memo(function Dustbin({ accept, childrens, onDrop, }) {
-    const [dustbins, setDustbins] = useState([...childrens]);
-    const moveDustbins = useCallback((dragIndex, hoverIndex) => {
-        const dragSection = dustbins[dragIndex];
-        setDustbins(update(dustbins, {
-            $splice: [
-                [dragIndex, 1],
-                [hoverIndex, 0, dragSection],
-            ],
-        }));
-    }, [dustbins]);
+export const Dustbin2 = memo(function Dustbin2({ id, accept, childrens, onDrop, }) {
     const [{ isOver, canDrop }, drop] = useDrop({
         accept,
         drop: onDrop,
@@ -34,8 +23,15 @@ export const Dustbin = memo(function Dustbin({ accept, childrens, onDrop, }) {
         }),
     });
     const isActive = isOver && canDrop;
+    let backgroundColor = '#222';
+    if (isActive) {
+        backgroundColor = 'darkgreen';
+    }
+    else if (canDrop) {
+        backgroundColor = 'darkkhaki';
+    }
     const KeysToComponentMap = {
-        section: Section
+        section: Section2
     };
     function renderer(config, index) {
         if (typeof KeysToComponentMap[config.component] !== "undefined") {
@@ -45,7 +41,6 @@ export const Dustbin = memo(function Dustbin({ accept, childrens, onDrop, }) {
                 {
                     index: index,
                     id: config.id,
-                    moveDustbins
                 },
                 config.children &&
                 (typeof config.children === "string"
@@ -54,18 +49,12 @@ export const Dustbin = memo(function Dustbin({ accept, childrens, onDrop, }) {
             );
         }
     }
-    let backgroundColor = '#222';
-    if (isActive) {
-        backgroundColor = 'darkgreen';
-    }
-    else if (canDrop) {
-        backgroundColor = 'darkkhaki';
-    }
     return (<div ref={drop} role="Dustbin" style={{ ...style, backgroundColor }}>
         {isActive
             ? 'Release to drop'
             : `This dustbin accepts: ${accept.join(', ')}`}
-        {childrens.map(children => renderer(children, 0))}
-        {childrens && (<p>Dropped: {JSON.stringify(childrens)}</p>)}
+
+        {childrens && (<p>Childrens: {JSON.stringify(childrens)}</p>)}
+        {childrens.map((child, index) => renderer(child, index))};
     </div>);
 });

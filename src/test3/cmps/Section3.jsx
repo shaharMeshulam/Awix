@@ -1,17 +1,13 @@
-import { useRef } from 'react';
+import { useCallback, useState, useRef } from "react";
 import { useDrag, useDrop } from 'react-dnd';
-import { ItemTypes } from '../ItemTypes';
-import { Dustbin } from './Dustbin';
-const style = {
-    border: '1px dashed gray',
-    padding: '0.5rem 1rem',
-    marginBottom: '.5rem',
-    backgroundColor: 'white',
-    cursor: 'move',
-};
-export function Section({ id, text, index, moveDustbins }) {
+import update from 'immutability-helper';
+import { ItemTypes } from "../../ItemTypes";
+import { Dustbin3 } from "./Dustbin3";
+
+export function Section3({ index, moveChild }) {
+    const [section, setSection] = useState({ id: 1, accepts: [ItemTypes.COLUMN], childrens: [] });
     const ref = useRef(null);
-    const [{ handlerId }, drop] = useDrop({
+    const [{ handlerId }, sortDrop] = useDrop({
         accept: ItemTypes.SECTION,
         collect(monitor) {
             return {
@@ -48,7 +44,7 @@ export function Section({ id, text, index, moveDustbins }) {
                 return;
             }
             // Time to actually perform the action
-            moveDustbins(dragIndex, hoverIndex);
+            moveChild(dragIndex, hoverIndex);
             // Note: we're mutating the monitor item here!
             // Generally it's better to avoid mutations,
             // but it's good here for the sake of performance
@@ -59,25 +55,29 @@ export function Section({ id, text, index, moveDustbins }) {
     const [{ isDragging }, drag] = useDrag({
         type: ItemTypes.SECTION,
         item: () => {
-            return { id, index };
+            return { id: section.id, index };
         },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
     });
-    const opacity = isDragging ? 0 : 1;
-    drag(drop(ref));
-    console.log('id', id)
-    return (<div ref={ref} style={{ ...style, opacity }} data-handler-id={handlerId}>
-        {id}
-        {/* <Dustbin 
-                key={dustbin.id} 
-                index={index} 
-                id={dustbin.id} 
-                text={dustbin.text} 
-                moveDustbins={moveDustbins} 
-                accept={ItemTypes.COLUMN} 
-                childrens={dustbin.childrens} 
-                onDrop={(item) => handleDrop(index, item)}/>; */}
-    </div>);
-};
+    drag(sortDrop(ref));
+    const handleDrop = useCallback((item) => {
+        setSection(update(section, {
+            childrens: {
+                $push: [item],
+            }
+        }));
+    }, [section]);
+    const renderDustbin = (section) => {
+        return (<Dustbin3
+            accept={section.accepts}
+            childrens={section.childrens}
+            onDrop={(item) => handleDrop(item)} />);
+    };
+    return (
+        <section ref={ref} index={section.index} data-handler-id={handlerId}>
+            {renderDustbin(section)}
+        </section>
+    )
+}

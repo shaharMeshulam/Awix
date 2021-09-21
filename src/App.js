@@ -1,12 +1,17 @@
-import './App.css';
-import { Editor2 } from './test2/pages/Editor2';
-import { Editor3 } from './test3/pages/Editor3';
-import { Editor4 } from './test4/pages/Editor4';
+import './test-ori/assets/style.scss'
+import { Editor } from './test-ori/pages/Editor';
+import { HTML5Backend } from 'react-dnd-html5-backend'
+
+
+import { DndProvider } from 'react-dnd'
+
 
 function App() {
   return (
     <div className="App">
-      <Editor4/>
+      <DndProvider backend={HTML5Backend}>
+        <Editor />
+      </DndProvider>
     </div>
   );
 }

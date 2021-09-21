@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
+import {translateStyle} from '../helpers';
 import { COLUMN } from "../constants";
 import { DropZone } from "./DropZone";
 import Component from "./Component";
@@ -22,22 +23,22 @@ const Column = ({ data, components, handleDrop, path, moveColumn, updateComponen
       const currPath = item.path.split('-');
       const dragIndex = (dragPath[0] === currPath[0]) ? item.path.split('-')[1] : -1;
       const hoverIndex = dragPath[1];
-      console.log('currPath:', currPath, 'dragPath', dragPath)
+      // console.log('currPath:', currPath, 'dragPath', dragPath)
       // Don't replace items with themselves
       if (dragPath === currPath) {
         return;
       }
       // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      console.log('hoverBoundingRect', hoverBoundingRect);
+      // console.log('hoverBoundingRect', hoverBoundingRect);
       // Get horizontal middle
       const hoverMiddleX = (hoverBoundingRect.left) + hoverBoundingRect.width / 2;
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
-      console.log('clientOffset', clientOffset);
+      // console.log('clientOffset', clientOffset);
       // Get pixels to the top
       const hoverClientX = clientOffset.x //- hoverBoundingRect.left;
-      console.log('hoverClientX:', hoverClientX, 'hoverMiddleX', hoverMiddleX)
+      // console.log('hoverClientX:', hoverClientX, 'hoverMiddleX', hoverMiddleX)
       // Only perform the move when the mouse has crossed half of the items height
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
@@ -71,10 +72,7 @@ const Column = ({ data, components, handleDrop, path, moveColumn, updateComponen
       isDragging: monitor.isDragging()
     })
   });
-
-  const opacity = isDragging ? 0 : 1;
-  drag(drop(ref));
-  // drag(ref);
+  
   const renderComponent = (component, currentPath) => {
     return (
       <Component
@@ -88,10 +86,12 @@ const Column = ({ data, components, handleDrop, path, moveColumn, updateComponen
       />
     );
   };
-  console.log('data',data)
-  const style = {...data.style};
-  style.padding = `${style.padding}px`
 
+  const opacity = isDragging ? 0 : 1;
+  drag(drop(ref));
+  
+  const style = translateStyle({...data.style});
+  console.log('style from column', style)
   return (
     <div
       ref={ref}

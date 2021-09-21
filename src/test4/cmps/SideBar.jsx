@@ -1,3 +1,4 @@
+import { StyledEngineProvider } from "@mui/styled-engine";
 import { useState } from "react";
 import { ColumnSectionEdit } from "./ColumnSectionEdit";
 import { SideBarItem } from "./SideBarItem";
@@ -13,7 +14,7 @@ export function SideBar({ sideBarItems, selected, update }) {
     }
     const onUpdate = (style) => {
         update(selected, 'style', style);
-        // console.log(selected)
+        // console.log('style:', style);
     }
     return (
         <div className="sideBar">
@@ -26,9 +27,11 @@ export function SideBar({ sideBarItems, selected, update }) {
             }
             {isEdit && selected && (
                 <>
+                <StyledEngineProvider injectFirst>
                     <div>{JSON.stringify(selected)}</div>
                     {selected.type === 'text' && <TextEdit style={selected.style} onUpdate={onUpdate}/>}
                     {selected.type === 'column' && <ColumnSectionEdit style={selected.style} onUpdate={onUpdate}/>}
+                </StyledEngineProvider>
                 </>
             )}
             {isEdit && !selected && <div>Nothing is selected</div>}

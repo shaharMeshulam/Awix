@@ -194,34 +194,20 @@ export const handleMoveSidebarComponentIntoParent = (
   splitDropZonePath,
   item
 ) => {
-  debugger;
+  // debugger;
   let newLayoutStructure;
   switch (splitDropZonePath.length) {
     case 1: {
       newLayoutStructure = {
         type: SECTION,
         id: shortid.generate(),
-        children: [{
-          type: COLUMN,
-          id: shortid.generate(),
-          children: [item],
-          style: {
-            padding: 10
-          }
-        }]
+        children: [_generateColumn(item)]
       };
       break;
     }
     case 2: {
-      debugger;
-      newLayoutStructure = {
-        type: COLUMN,
-        id: shortid.generate(),
-        children: [item],
-        style: {
-          padding: 10
-        }
-      };
+      // debugger;
+      newLayoutStructure = _generateColumn(item);
       break;
     }
     default: {
@@ -235,3 +221,27 @@ export const handleMoveSidebarComponentIntoParent = (
 export const handleRemoveItemFromLayout = (layout, splitItemPath) => {
   return removeChildFromChildren(layout, splitItemPath);
 };
+
+export const translateStyle = (style) => {
+  if (style.paddingTop) style.paddingTop = `${style.paddingTop}px`;
+  if (style.paddingRight) style.paddingRight = `${style.paddingRight}px`;
+  if (style.paddingBottom) style.paddingBottom = `${style.paddingBottom}px`;
+  if (style.paddingLeft) style.paddingLeft = `${style.paddingLeft}px`;
+  if (style.marginTop) style.marginTop = `${style.marginTop}px`;
+  if (style.marginRight) style.paddingRight = `${style.marginRight}px`;
+  if (style.marginBottom) style.marginBottom = `${style.marginBottom}px`;
+  if (style.marginLeft) style.marginLeft = `${style.marginLeft}px`;
+  return style;
+}
+
+const _generateColumn = (item) => {
+  return {
+    type: COLUMN,
+    id: shortid.generate(),
+    children: [item],
+    style: {
+      padding: 10,
+      flexGrow: 1
+    }
+  }
+}

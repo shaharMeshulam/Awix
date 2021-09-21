@@ -18,7 +18,7 @@ import { SideBar } from "../cmps/SideBar";
 export function Editor4() {
     const [layout, setLayout] = useState([]);
     const [components, setComponents] = useState([]);
-    const [selected, setSelected] = useState(null)
+    const [selected, setSelected] = useState(null);
     const moveSection = useCallback((dragIndex, hoverIndex) => {
         const dragSection = layout[dragIndex];
         setLayout(update(layout, {
@@ -29,7 +29,7 @@ export function Editor4() {
         }));
     }, [layout]);
     const moveColumn = useCallback((currPath, dragPath) => {
-        console.log('currPath:', currPath, 'dragPath:', dragPath)
+        // console.log('currPath:', currPath, 'dragPath:', dragPath)
         const currColumn = layout[currPath[0]].children[currPath[1]];
         if (currColumn.id === layout[dragPath[0]].children[dragPath[1]].id) return
         if (currPath[0] === dragPath[0]) {

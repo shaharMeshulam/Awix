@@ -6,7 +6,7 @@ import { COMPONENT, SIDEBAR_ITEM, SECTION, COLUMN } from "../constants";
 const ACCEPTS = [SIDEBAR_ITEM, COMPONENT, SECTION, COLUMN];
 
 export function DropZone({ data, onDrop, isLast, className }) {
-  const [{ isOver, canDrop }, drop] = useDrop({
+  const [{ isOver, canDrop}, drop] = useDrop({
     accept: ACCEPTS,
     drop: (item, monitor) => {
       onDrop(data, item);
@@ -63,11 +63,12 @@ export function DropZone({ data, onDrop, isLast, className }) {
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
+      canDrop: monitor.canDrop(),
     })
   });
 
   const isActive = isOver || canDrop;
+  
   return (
     <div
       className={classNames(

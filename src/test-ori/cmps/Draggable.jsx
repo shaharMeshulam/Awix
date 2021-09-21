@@ -2,9 +2,9 @@ import React, { useState, useRef } from "react";
 import { useDrag } from "react-dnd";
 
 
-export function Draggable({ id, type, path }) {
+export function Draggable({ id, type, path, component }) {
     const ref = useRef(null)
-    const [draggable,] = useState({ id, type, path })
+    const [draggable,] = useState({ id, type, path,component })
 
     const [{ isDragging }, drag] = useDrag({
         type: type,
@@ -24,7 +24,7 @@ export function Draggable({ id, type, path }) {
             ref={ref}
             className="draggable"
         >
-            {draggable.type}
+            {draggable.component}
         </div>
     )
 }

@@ -1,85 +1,97 @@
 import React, { useState, useRef } from "react";
-import { useDrop } from 'react-dnd'
 import { v4 as uuid } from 'uuid';
 import { ItemTypes } from "../js/ItemTypes";
 import { DroppableDraggable } from "../cmps/DroppableDraggable";
 import { Draggable } from "../cmps/Draggable";
+import { DropZone } from "../cmps/DropZone";
 
 const draggables = [
     {
         id: 1,
-        type: ItemTypes.SECTION,
-        accept: ItemTypes.COLUMN
+        type: ItemTypes.DRAGGABLE,
+        component: ItemTypes.SECTION
     },
     {
         id: 2,
-        type: ItemTypes.COLUMN,
-        accept: ItemTypes.COMPONENT
+        type: ItemTypes.DRAGGABLE,
+        component: ItemTypes.COLUMN
     },
     {
         id: 3,
-        type: ItemTypes.COMPONENT
+        type: ItemTypes.DRAGGABLE,
+        component: ItemTypes.COMPONENT
     }
 ]
 
 export function Editor() {
     const ref = useRef(null)
 
-    const onDrop = (item) => {
+    // const moveElement = (dragPath, hoverPath) => {
+    //     if (dragPath.length === 1 && hoverPath.length === 1) {
+    //         const newSite = [...site]
+    //         const [dragSection] = newSite.splice(dragPath[0], 1)
+    //         const [hoverSection] = newSite.splice(hoverPath[0], 1)
+    //         newSite.splice(dragPath[0], 0, hoverSection)
+    //         newSite.splice(hoverPath[0], 0, dragSection)
+    //     }
+
+    // }
+
+    const onDrop = (item, path) => {
         item.id = (item.id) ? item.id : uuid();
-
-        console.log('item from Editor', item);
-
         switch (item.type) {
-            case (ItemTypes.SECTION):
-                item.children = []
-                setSite([...site, { ...item }])
-                break;
-            case (ItemTypes.COLUMN):
-                item.children = []
-                console.log(site);
-                site[item.path].children.push(item)
-                setSite(site)
-                break
-            default:
+            case (ItemTypes.DRAGGABLE):
+                let newSite = [...site]
+                path = path.split('-')
+                switch (item.component) {
+                    case (ItemTypes.SECTION):
+                        item.children = []
+                        newSite.splice(+path[0], 0, item)
+                        newSite = newSite.map((sec, idx) => ({ ...sec, path: `${idx}` }))
+                        setSite(newSite)
+                        break;
+                    case (ItemTypes.COLUMN):
+                        item.children = []
+                        newSite[+path[0]].children.splice(+path[0], 0, item)
+                        newSite[+path[0]].children = newSite[+path[0]].children.map((col, idx) => ({ ...col, path: `${path[0]}-${idx}` }))
+                        setSite(newSite)
+                        break
+                    default:
+                        newSite[+path[0]].children[+path[1]].children.splice(+path[2], 0, item)
+                        newSite[+path[0]].children[+path[1]].children = newSite[+path[0]].children[+path[1]].children.map((cmp, idx) => ({ ...cmp, path: `${path[0]}-${path[1]}-${idx}` }))
+                        setSite(newSite)
+                }
         }
     }
 
     const [site, setSite] = useState([])
 
-    const [{ isOver, canDrop }, drop] = useDrop({
-        accept: ItemTypes.SECTION,
-        canDrop: (item) => {
-            if (item.type === ItemTypes.SECTION) return true
-            return false
-        },
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop(),
-        }),
-        drop: (item) => onDrop(item)
-    })
-
-    drop(ref)
     return (
         <>
             <div className="draggables">
-
-                {draggables.map(item => <Draggable key={`drag${item.id}`} type={item.type}></Draggable>)}
+                {draggables.map(item => <Draggable key={`drag${item.id}`} type={item.type} component={item.component}></Draggable>)}
             </div>
             <div
-                ref={ref}
                 className="site"
-                style={{ backgroundColor: (isOver && canDrop) ? 'yellow' : 'gray', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-                {site.length && site.map((section, idx) => <DroppableDraggable
-                    onDrop={onDrop}
-                    path={`${idx}`}
-                    accept={ItemTypes.COLUMN}
-                    type={ItemTypes.SECTION}
-                    key={section.id}
-                    id={section.id}
-                    children={section.children} />
-                )}
+                style={{ backgroundColor: 'gray', padding: '20px', display: 'flex', flexDirection: 'column' }}>
+                {site.length && site.map((section, idx) => {
+                    const currPath = `${idx}`
+                    return <React.Fragment key={section.id} >
+                        <DropZone
+                            currPath={currPath}
+                            onDrop={onDrop}
+                        />
+                        <DroppableDraggable
+                            onDrop={onDrop}
+                            path={section.path}
+                            accept={ItemTypes.SECTION}
+                            type={ItemTypes.SECTION}
+                            component={section.component}
+                            id={section.id}
+                            children={section.children} />
+                    </React.Fragment>
+                })}
+                <DropZone currPath={`${site.length}`} isLast onDrop={onDrop} />
             </div>
         </>
     )

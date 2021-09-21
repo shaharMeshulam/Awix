@@ -1,5 +1,6 @@
 export const ItemTypes = {
     SECTION: 'section',
     COLUMN: 'column',
-    COMPONENT: 'component'
+    COMPONENT: 'component',
+    DRAGGABLE: 'draggable'
 }
